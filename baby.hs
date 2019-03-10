@@ -1,12 +1,16 @@
+-- Baby functions
 doubleMe x = x + x
 doubleUs x y = doubleMe x + doubleMe y
 doubleSmallNumber x = if x > 100
                     then x
                     else x*2
+
+-- List comprehension
 boomBang xs = [if x < 10 then "Boom!" else "Bang!" | x <- xs , odd x]
--- length' xs = sum [1|_<-xs]
+
 removeNonUppercase st = [c|c<-st,c`elem`['A'..'Z']]
 
+-- Pattern matching
 lucky :: (Integral a) => a -> String
 lucky 7 = "Lucky Number Seven!"
 lucky x = "Out of luck"
@@ -22,15 +26,13 @@ head' :: [a] -> a
 head' [] = error "Empty list"
 head' (x:_) = x
 
-calcBmis :: (RealFloat a) => [(a,a)] -> [a]
-calcBmis xs = [bmi w h | (w,h) <- xs]
-    where bmi w h = w / h ^ 2
-
 tell :: (Show a) => [a] -> String
 tell [] = "Empty"
 tell (x:[]) = "1 element: " ++ show x
 tell (x:y:[]) = "2 elements: " ++ show x ++ ", " ++ show y
 tell (x:y:_) = "Many elements, first one is: " ++ show x ++ ", second one is: " ++ show y
+
+-- length' xs = sum [1|_<-xs]
 
 length' :: (Num b) => [a] -> b
 length' [] = 0
@@ -43,3 +45,54 @@ sum' (x:xs) = x + sum' xs
 capital :: String -> String
 capital [] = "Empty String"
 capital all@(x:xs) = "First letter of " ++ all ++ " is: " ++ [x]
+
+-- Guards
+
+-- bmiTell :: (RealFloat a) => a -> String
+-- bmiTell bmi
+--     | bmi <  18.5 = "Skinny"
+--     | bmi < 25.0 = "Ordinary"
+--     | bmi < 30.0 = "Fatass"
+--     | otherwise = "..."
+
+-- bmiTell :: (RealFloat a) => a -> a -> String
+-- bmiTell w h
+--     | w / h ^ 2 < 18.5 = "Skinny"
+--     | w / h ^ 2 < 25.0 = "Ordinary"
+--     | w / h ^ 2 < 30.0 = "Fatass"
+--     | otherwise = "..."
+
+-- Where binding
+
+bmiTell :: (RealFloat a) => a -> a -> String
+bmiTell w h
+    | bmi < skinny = "Skinny"
+    | bmi < ordinary = "Ordinary"
+    | bmi < fatass = "Fatass"
+    | otherwise = "..."
+    where bmi = w / h ^ 2
+          skinny = 18.5
+          ordinary = 25.0
+          fatass = 30.0  
+
+initials :: String -> String -> String
+initials first last = "Initials are: " ++ [f] ++ " " ++ [l]
+    where (f:_) = first
+          (l:_) = last
+
+calcBmis :: (RealFloat a) => [(a,a)] -> [String]
+calcBmis xs = [bmiTell (bmi w h) | (w,h) <- xs]
+    where bmi w h = w / h ^ 2
+          bmiTell a
+                  | a < 18 = "Skinny"
+                  | a < 25 = "Ordinary"
+                  | a < 30 = "Fat"
+                  | otherwise = "..."
+
+-- Let it be
+
+cylinder :: (RealFloat a) => a -> a -> a
+cylinder r h =
+    let sideArea = 2 * pi * r * h
+        topArea = pi * r ^ 2
+    in  sideArea + 2 * topArea
