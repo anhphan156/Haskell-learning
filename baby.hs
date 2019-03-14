@@ -96,3 +96,54 @@ cylinder r h =
     let sideArea = 2 * pi * r * h
         topArea = pi * r ^ 2
     in  sideArea + 2 * topArea
+
+-- Recursion
+equalString :: String -> String -> Bool
+equalString [] [] = True
+equalString (x:xs) (y:ys) = x == y && equalString xs ys
+equalString _ _ = False
+
+maximum' :: (Ord a) => [a] -> a
+maximum' [] = error "empty"
+maximum' [x] = x
+maximum' (x:xs)
+    | x > maxTail = x
+    | otherwise = maxTail 
+    where maxTail = maximum' xs
+
+replicate' :: (Num i, Ord i) => i -> a -> [a]
+replicate' x y
+    | x <= 0 = []
+    | otherwise = y : replicate' (x-1) y
+
+take' :: (Num i, Ord i) => i -> [a] -> [a]
+take' x _
+    | x <= 0 = []
+take' _ [] = []
+take' x (y:ys) = y : take' (x - 1) ys
+
+reverse' :: [a] -> [a]
+reverse' [] = []
+reverse' (x:xs) = reverse' xs ++ [x]
+
+repeat' :: (Num a) => a -> [a]
+repeat' a = a:repeat' a
+
+zip' :: [a] -> [b] ->[(a,b)]
+zip' _ [] = []
+zip' [] _ = []
+zip' (x:xs) (y:ys) = (x,y) : zip' xs ys
+
+elem' :: (Eq i) => i -> [i] -> Bool
+elem' _ [] = False
+elem' x (y:ys)
+    | x == y = True
+    | otherwise = x `elem'` ys
+
+quicksort :: (Ord i) => [i] -> [i]
+quicksort [] = []
+quicksort (x:xs) = 
+    let smallPart = quicksort [a | a <- xs, a <= x]
+        greatPart = quicksort [a | a <- xs, a > x]
+    in
+        smallPart ++ [x] ++ greatPart
